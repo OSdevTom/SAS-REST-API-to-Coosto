@@ -1,18 +1,20 @@
 /* Connection parameters to REST API */
 
-
-
 %let protocol = https;
 %let endpoint = in.coosto.com/api/1;
 %let login = users/login;
 
-/*** 
 
-Replace with your own username and password 
+%include '/srv/nfs/kubedata/compute-landingzone/sbxtot/PasswordandUser_Coosto.sas';
+
+
+/*** 
+In this SAS file, I have the following 2 lines of code 
 
 %let username = abc@abc.com;
 %let password = Password123;
 ***/
+
 
 /* Construct URL to get data */
 data _NULL_;
@@ -24,13 +26,17 @@ run;
 
 /* Save resulting JSON and make the REST API call */
 filename result temp;
-
 proc http
 	url="%superq(url)"
 	method="GET"
 	out=result;
 run;
 
+/*parse temp file from json into sas dataset*/
+
 libname opendata JSON fileref=result;
+
+/*creates three files in your work library*/
+
 proc copy in=opendata out=work;run;
 
